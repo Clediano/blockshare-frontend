@@ -4,7 +4,7 @@ import { getFromSessionStorage } from 'common/localstorage';
 import { KEY_STORAGE } from 'common/localstorage/const';
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3333'
 });
 
 api.interceptors.request.use(config => {

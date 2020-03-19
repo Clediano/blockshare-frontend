@@ -70,14 +70,22 @@ class SignIn extends Component {
         this.props.enqueueSnackbar(`Seja bem-vindo ${String(resp.data.name).toLowerCase()} ❤❤`, { variant: 'success' });
 
         const oidavatar = resp.data.oidphoto;
-        const avatar = await mountDataImage(oidavatar);
-        
-        saveAsSessionStorage(KEY_STORAGE.AVATAR, avatar);
-        this.props.loadAvatar({ avatar, oidavatar });
 
-        this.setState({ loading: false });
+        if (oidavatar) {
+          const avatar = await mountDataImage(oidavatar);
 
-        history.push('/dashboard');
+          saveAsSessionStorage(KEY_STORAGE.AVATAR, avatar);
+          this.props.loadAvatar({ avatar, oidavatar });
+
+          this.setState({ loading: false });
+
+          history.push('/dashboard');
+        } else {
+          this.setState({ loading: false });
+
+          history.push('/dashboard');
+        }
+
 
       }, ({ response }) => {
         let message = '';
