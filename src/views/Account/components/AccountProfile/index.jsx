@@ -63,12 +63,16 @@ class AccountProfile extends Component {
 
         this.hiddenLoading();
 
-        const dataImage = await mountDataImage(resp.data._id);
-
-        saveAsSessionStorage(KEY_STORAGE.AVATAR, dataImage);
-        this.props.loadAvatar({
-          avatar: dataImage,
-          oidvatar: resp.data._id
+        mountDataImage(resp.data._id, dataImage => {
+          saveAsSessionStorage(KEY_STORAGE.AVATAR, dataImage);
+          this.props.loadAvatar({
+            avatar: dataImage,
+            oidvatar: resp.data._id
+          });
+          this.hiddenLoading();
+        }, () => {
+          this.props.enqueueSnackbar('Ocorreu um erro ao atualizar o avatar. Por favor, faça login na aplicação novamente 😅😅', { variant: 'warning' });
+          this.hiddenLoading();
         });
       }, err => {
         this.props.enqueueSnackbar('Esse arquivo infelizmente não é suportado. 😢😢', { variant: 'error' });

@@ -8,7 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
-import { withStyles } from '@material-ui/core';
+import { withStyles, Backdrop, CircularProgress } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 
 import FieldErrorMessage from 'components/FieldErrorMessage';
@@ -56,8 +56,8 @@ class SignIn extends Component {
   };
 
 
-  handleSignIn = async () => {
-
+  handleSignIn = async e => {
+    e.preventDefault();
     const { history, values, validateForm } = this.props;
 
     await validateForm(values);
@@ -66,35 +66,25 @@ class SignIn extends Component {
 
       this.setState({ loading: true });
 
-      signIn(values.email, values.password, async resp => {
-        this.props.enqueueSnackbar(`Seja bem-vindo ${String(resp.data.name).toLowerCase()} ❤❤`, { variant: 'success' });
-
-        const oidavatar = resp.data.oidphoto;
-
-        if (oidavatar) {
-          const avatar = await mountDataImage(oidavatar);
-
+      signIn(values.email, values.password, resp => {
+        mountDataImage(resp.data.oidphoto, avatar => {
           saveAsSessionStorage(KEY_STORAGE.AVATAR, avatar);
-          this.props.loadAvatar({ avatar, oidavatar });
+          this.props.loadAvatar({ avatar, oidavatar: resp.data.oidphoto });
 
           this.setState({ loading: false });
 
           history.push('/dashboard');
-        } else {
+        }, () => {
           this.setState({ loading: false });
 
           history.push('/dashboard');
-        }
+        }, () => {
+          this.props.enqueueSnackbar(`Seja bem-vindo ${String(resp.data.name).toLowerCase()} ❤❤`, { variant: 'success' });
+        });
 
-
-      }, ({ response }) => {
-        let message = '';
-        if (response && response.data) {
-          message = response.data.message;
-        } else {
-          message = 'Não foi possível comunicar-se com o servidor.';
-        }
-        this.props.enqueueSnackbar(message, { variant: 'error' });
+      }, err => {
+        this.props.enqueueSnackbar(err.response.data.message || 'Não foi possível comunicar-se com o servidor.', { variant: 'error' });
+        this.setState({ loading: false });
       });
 
     } else {
@@ -109,6 +99,9 @@ class SignIn extends Component {
 
     return (
       <div className={classes.root}>
+        <Backdrop className={classes.backdrop} open={loading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
         <Grid className={classes.grid} container>
           <Grid className={classes.quoteWrapper} item lg={5}>
             <div className={classes.quote}>
@@ -142,7 +135,7 @@ class SignIn extends Component {
               </div>
 
               <div className={classes.contentBody}>
-                <form className={classes.form}>
+                <form className={classes.form} onSubmit={this.handleSignIn}>
                   <Typography
                     className={classes.title}
                     variant="h2"
@@ -182,8 +175,8 @@ class SignIn extends Component {
                     className={classes.signInButton}
                     color="primary"
                     disabled={loading}
-                    onClick={this.handleSignIn}
                     size="large"
+                    type="submit"
                     variant="contained"
                   >
                     Acessar

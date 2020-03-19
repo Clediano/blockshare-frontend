@@ -11,10 +11,15 @@ export const loadAvatar = (archiveid, onSuccess) => {
     });
 };
 
-export const mountDataImage = async archiveid => {
-  const resp = await api.get(`/archive/${archiveid}`);
-
-  return `data:${resp.data.mimetype};base64,${btoa(String.fromCharCode(...new Uint8Array(resp.data.file.data)))}`;
+export const mountDataImage = (archiveid, onSuccess, onError, onFinally) => {
+  api.get(`/archive/${archiveid}`)
+    .then(resp => {
+      onSuccess && onSuccess(`data:${resp.data.mimetype};base64,${btoa(String.fromCharCode(...new Uint8Array(resp.data.file.data)))}`);
+    })
+    .catch(err => {
+      onError && onError(err);
+    })
+    .finally(() => onFinally && onFinally());
 };
 
 export const removeElementOfList = (list, simple = true, field, valueOfElement) => {

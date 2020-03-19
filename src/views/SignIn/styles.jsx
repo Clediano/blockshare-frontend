@@ -158,5 +158,9 @@ export default theme => ({
     alignText: 'center',
     marginBottom: theme.spacing(1),
     marginTop: theme.spacing(2)
-  }
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
 });

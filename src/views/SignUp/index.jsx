@@ -4,7 +4,7 @@ import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import compose from 'recompose/compose';
 
-import { withStyles } from '@material-ui/core';
+import { withStyles, Backdrop, CircularProgress } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
@@ -38,31 +38,49 @@ const initialValues = {
 
 class SignUp extends Component {
 
+  state = {
+    loading: false
+  }
+
+  enableLoading = () => {
+    this.setState({ loading: true });
+  }
+
+  disableLoading = () => {
+    this.setState({ loading: false });
+  }
+
   handleBack = () => {
     const { history } = this.props;
 
     history.goBack();
   };
 
-  handleSignUp = async () => {
+  handleSignUp = () => {
 
     const { history, values, enqueueSnackbar } = this.props;
 
-    await signUp(values.name, values.email, values.type, values.cpf, values.cnpj, response => {
-      enqueueSnackbar(response.data.message, {
-        variant: 'success',
-        onClose: () => history.push('/sign-in')
-      });
+    this.enableLoading();
+
+    signUp(values.name, values.email, values.type, values.cpf, values.cnpj, response => {
+      enqueueSnackbar(response.data.message, { variant: 'success' });
+      this.disableLoading();
+      history.push('/sign-in')
     }, err => {
-      enqueueSnackbar(err.response.data.message, { variant: 'error' });
+      this.disableLoading();
+      enqueueSnackbar(err.response.data.message || "Ocorreu um erro ao cadastrar a organização 😌😌", { variant: 'error' });
     });
   };
 
   render() {
     const { classes, values, errors, dirty, touched, setFieldTouched } = this.props;
+    const { loading } = this.state;
 
     return (
       <div className={classes.root}>
+        <Backdrop className={classes.backdrop} open={loading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
         <Grid
           className={classes.grid}
           container
@@ -98,7 +116,7 @@ class SignUp extends Component {
                   className={classes.backButton}
                   onClick={this.handleBack}
                 >
-                  <ArrowBackIcon/>
+                  <ArrowBackIcon />
                 </IconButton>
               </div>
               <div className={classes.contentBody}>
@@ -119,6 +137,7 @@ class SignUp extends Component {
                   <div className={classes.fields}>
                     <TextField
                       className={classes.textField}
+                      disabled={loading}
                       label="Nome da organização"
                       name="name"
                       error={Boolean(touched['name']) && Boolean(errors.name)}
@@ -127,9 +146,11 @@ class SignUp extends Component {
                       value={values.name}
                       variant="outlined"
                     />
-                    <FieldErrorMessage touched={touched['name']} errors={errors} field="name"/>
+                    <FieldErrorMessage touched={touched['name']} errors={errors} field="name" />
+
                     <TextField
                       className={classes.textField}
+                      disabled={loading}
                       label="Endereço de e-mail da organização"
                       name="email"
                       error={Boolean(touched['email']) && Boolean(errors.email)}
@@ -138,9 +159,9 @@ class SignUp extends Component {
                       value={values.email}
                       variant="outlined"
                     />
-                    <FieldErrorMessage touched={touched['email']} errors={errors} field="email"/>
+                    <FieldErrorMessage touched={touched['email']} errors={errors} field="email" />
 
-                    <FormControl variant="outlined" className={classes.textField}>
+                    <FormControl variant="outlined" className={classes.textField} disabled={loading}>
                       <InputLabel> Tipo da entidade </InputLabel>
                       <Select
                         label="Tipo da entidade"
@@ -159,6 +180,7 @@ class SignUp extends Component {
                         <span className={classes.textField}>
                           <TextField
                             className={classes.textField}
+                            disabled={loading}
                             label="CPF"
                             name="cpf"
                             type="number"
@@ -168,30 +190,31 @@ class SignUp extends Component {
                             value={values.password}
                             variant="outlined"
                           />
-                          <FieldErrorMessage touched={touched['cpf']} errors={errors} field='cpf'/>
+                          <FieldErrorMessage touched={touched['cpf']} errors={errors} field='cpf' />
                         </span>
                       ) : (
-                        <span className={classes.textField}>
-                          <TextField
-                            className={classes.textField}
-                            label="CNPJ"
-                            name="cnpj"
-                            type="number"
-                            error={Boolean(touched['cnpj']) && Boolean(errors.password)}
-                            onBlur={() => setFieldTouched('cnpj', true)}
-                            onChange={event => this.props.setFieldValue('cnpj', event.target.value)}
-                            value={values.password}
-                            variant="outlined"
-                          />
-                          <FieldErrorMessage touched={touched['cnpj']} errors={errors} field='cnpj'/>
-                        </span>
-                      )
+                          <span className={classes.textField}>
+                            <TextField
+                              className={classes.textField}
+                              disabled={loading}
+                              label="CNPJ"
+                              name="cnpj"
+                              type="number"
+                              error={Boolean(touched['cnpj']) && Boolean(errors.password)}
+                              onBlur={() => setFieldTouched('cnpj', true)}
+                              onChange={event => this.props.setFieldValue('cnpj', event.target.value)}
+                              value={values.password}
+                              variant="outlined"
+                            />
+                            <FieldErrorMessage touched={touched['cnpj']} errors={errors} field='cnpj' />
+                          </span>
+                        )
                     }
                   </div>
                   <Button
                     className={classes.signUpButton}
                     color="primary"
-                    disabled={!dirty}
+                    disabled={!dirty || loading}
                     onClick={this.handleSignUp}
                     size="large"
                     variant="contained"
