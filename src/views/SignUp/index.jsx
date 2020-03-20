@@ -56,7 +56,8 @@ class SignUp extends Component {
     history.goBack();
   };
 
-  handleSignUp = () => {
+  handleSignUp = e => {
+    e.preventDefault();
 
     const { history, values, enqueueSnackbar } = this.props;
 
@@ -120,7 +121,7 @@ class SignUp extends Component {
                 </IconButton>
               </div>
               <div className={classes.contentBody}>
-                <form className={classes.form}>
+                <form className={classes.form} onSubmit={this.handleSignUp}>
                   <Typography
                     className={classes.title}
                     variant="h2"
@@ -215,9 +216,9 @@ class SignUp extends Component {
                     className={classes.signUpButton}
                     color="primary"
                     disabled={!dirty || loading}
-                    onClick={this.handleSignUp}
                     size="large"
                     variant="contained"
+                    type="submit"
                   >
                     Cadastrar
                   </Button>
