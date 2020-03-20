@@ -115,6 +115,7 @@ class OrganizationTable extends Component {
                                             >
                                                 <IconButton
                                                     size="medium"
+                                                    disabled={!friend.match}
                                                     onClick={event => this.handleDetailsClick(event, friend)}
                                                 >
                                                     <MoreVert />
