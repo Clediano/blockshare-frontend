@@ -2,6 +2,7 @@
   "name": "ged-documentos-registrados-blockchain",
   "version": "0.2.0",
   "private": true,
+  "homepage": ".",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
