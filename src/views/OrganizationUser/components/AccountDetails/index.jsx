@@ -23,7 +23,7 @@ const initialValues = {
   confirmation: ''
 };
 
-class Account extends Component {
+class AccountDetails extends Component {
   state = {
     organizationid: '',
     userCreated: false
@@ -118,16 +118,6 @@ class Account extends Component {
                   />
                   <FieldErrorMessage touched={touched['confirmation']} errors={errors} field="confirmation"/>
                 </div>
-
-                {/*<Button*/}
-                {/*  className={classes.signInButton}*/}
-                {/*  color="primary"*/}
-                {/*  onClick={this.handleSignIn}*/}
-                {/*  size="large"*/}
-                {/*  variant="contained"*/}
-                {/*>*/}
-                {/*  Acessar*/}
-                {/*</Button>*/}
               </form>
             </PortletContent>
             <PortletFooter noDivider alignRight>
@@ -146,7 +136,7 @@ class Account extends Component {
   }
 }
 
-Account.propTypes = {
+AccountDetails.propTypes = {
   className: PropTypes.string,
   classes: PropTypes.object.isRequired
 };
@@ -168,7 +158,7 @@ const AccountDetailsForm = withFormik({
     password: Yup.string().required('O campo senha é obrigatório'),
     confirmation: Yup.string().required('É necessário confirmar sua senha')
   })
-})(Account);
+})(AccountDetails);
 
 const AccountDetailsFormWithRouter = withRouter(AccountDetailsForm);
 

@@ -14,7 +14,7 @@ const styles = theme => ({
   }
 });
 
-class Account extends Component {
+class OrganizationUser extends Component {
 
   state = {
     organizationHasUsers: true
@@ -29,8 +29,6 @@ class Account extends Component {
       this.setState({
         organizationHasUsers: Boolean(response.data.length > 0)
       });
-    }, err => {
-      this.props.enqueueSnackbar(err.response.data.message, { variant: 'error'});
     })
   }
 
@@ -51,11 +49,11 @@ class Account extends Component {
   }
 }
 
-Account.propTypes = {
+OrganizationUser.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-const AccountWithRouter = withRouter(Account);
+const AccountWithRouter = withRouter(OrganizationUser);
 const AccountWithSnackbar = withSnackbar(AccountWithRouter);
 
 export default withStyles(styles)(AccountWithSnackbar);
