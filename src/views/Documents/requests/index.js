@@ -29,9 +29,9 @@ export const loadAllTransactions = (offset = 0, limit = 10, onSuccess, onError) 
         })
 };
 
-export const findTransactionsByTxid = (txid, onSuccess, onError) => {
+export const findTransactionsByTxid = (txid, offset = 0, limit = 10, onSuccess, onError) => {
     const organization = getFromSessionStorage(KEY_STORAGE.ORGANIZATION_ID);
-    axios.get(`/transactions/organization/${organization}/search/txid/${txid}`)
+    axios.get(`/transactions/organization/${organization}/search/txid/${txid}/${offset}/${limit}`)
         .then(resp => {
             onSuccess && onSuccess(resp.data)
         })

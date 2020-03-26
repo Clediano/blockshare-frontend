@@ -34,7 +34,7 @@ class WithDocument extends Component {
     const { document } = this.props;
 
     const type = String(document.type);
-    const typeSplitted = type.split('/')[1].toUpperCase();
+    const typeSplitted = type.split('/')[1] || '';
 
     if (type.includes('audio')) {
       return String(typeSplitted);
@@ -84,7 +84,6 @@ class WithDocument extends Component {
                       ALTERAR
                     </Button>
                   </Tooltip>
-
                 </Grid>
               </Grid>
               <Grid item xs={6} container direction="column" justify="space-between" alignItems="flex-end">

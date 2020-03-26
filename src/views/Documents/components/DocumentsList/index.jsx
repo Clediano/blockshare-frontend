@@ -115,7 +115,7 @@ class DocumentsList extends Component {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {transactions ? transactions.map(transaction => (
+                    {transactions && transactions.length > 0 && transactions.map(transaction => (
                       <TableRow
                         className={classes.tableRow}
                         hover
@@ -163,7 +163,7 @@ class DocumentsList extends Component {
                           </IconButton>
                         </TableCell>
                       </TableRow>
-                    )) : 'Nenhum documento encontrado'}
+                    ))}
                   </TableBody>
                 </Table>
               )}

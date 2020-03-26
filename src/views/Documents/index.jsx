@@ -46,7 +46,7 @@ class DocumentsRegistration extends Component {
 
     this.showLoading();
 
-    loadAllTransactions((rowsPerPage*page), rowsPerPage, transactions => {
+    loadAllTransactions((rowsPerPage * page), rowsPerPage, transactions => {
       this.setState({
         transactions: transactions.rows,
         count: transactions.count,
@@ -63,13 +63,16 @@ class DocumentsRegistration extends Component {
     this.showLoading();
 
     const { page, rowsPerPage } = this.state;
-
-    if (value) {
+    console.log(value)
+    if (value && value !== '') {
       if (filterSelected) {
         switch (filterSelected.value) {
           case 'txid': {
-            await findTransactionsByTxid(value, page, rowsPerPage, transactions => {
-              this.setState({ transactions, loading: false });
+            await findTransactionsByTxid(value, (rowsPerPage * page), rowsPerPage, transactions => {
+              this.setState({
+                transactions: transactions.rows,
+                loading: false
+              });
             }, err => {
               this.hiddenLoading();
               this.props.enqueueSnackbar(err && err.response.data.error ? err.response.data.error : 'Ocorreu um erro ao localizar seus documentos 😢😢', { variant: 'error' });
@@ -82,7 +85,10 @@ class DocumentsRegistration extends Component {
       }
     } else {
       loadAllTransactions(page, rowsPerPage, transactions => {
-        this.setState({ transactions, loading: false });
+        this.setState({
+          transactions: transactions.rows,
+          loading: false
+        });
       }, err => {
         this.hiddenLoading();
         this.props.enqueueSnackbar('Ocorreu um erro ao localizar seus documentos 😢😢', { variant: 'error' });
