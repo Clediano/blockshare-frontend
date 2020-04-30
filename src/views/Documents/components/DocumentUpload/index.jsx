@@ -6,15 +6,16 @@ import { withStyles } from '@material-ui/core';
 
 import Dropzone from 'react-dropzone';
 import WithDocument from './WithDocument';
-import AlertDialog from 'components/Modal';
+import ModalShareDocuments from './components/ModalShareDocuments';
 
 import styles from './styles';
 
-import { registerDocument } from '../../requests';
+import { registerDocument, registerDocumentAndShare } from '../../requests';
 import { getBytesFromFile } from 'common/functions';
 import { SHA256 } from 'crypto-js';
 import WithoutDocument from './WithoutDocument';
 import { withSnackbar } from 'notistack';
+import ResponsiveDialog from 'components/Dialog';
 
 class Upload extends Component {
 
@@ -22,7 +23,9 @@ class Upload extends Component {
     document: null,
     sha256: '',
     loading: false,
-    openAlertDialog: false
+    openAlertDialog: false,
+    openShareConfirmation: false,
+    openShareDocument: false
   };
 
   onDropAccepted = event => {
@@ -32,17 +35,24 @@ class Upload extends Component {
     });
   };
 
-  onClickRegister = async () => {
+  onClickRegister = () => {
+    this.setState({ openShareConfirmation: true })
+  };
 
-    this.setState({ loading: true });
+  registerAndShare = organizations => {
+    this.setState({ openShareConfirmation: false, openShareDocument: false, loading: true });
 
-    await registerDocument(this.state.document, () => {
+    const emails = organizations.map(org => org.value);
+
+    registerDocumentAndShare(this.state.document, emails, () => {
       this.props.enqueueSnackbar('Documento enviado para registro ✔✔', { variant: 'success' });
       this.props.getTransactions();
+      this.setState({ loading: false });
     }, err => {
       this.props.enqueueSnackbar(err && err.error ? err.error : 'Não foi possível registrar este arquivo  😮😮', { variant: 'error' });
       if (err && err.response.data.transaction) {
         this.setState({
+          loading: false,
           openAlertDialog: true,
           transactionId: err.response.data.transaction.id
         });
@@ -50,7 +60,29 @@ class Upload extends Component {
     }, () => {
       this.resetState();
     });
-  };
+  }
+
+  registerOnly = () => {
+
+    this.setState({ openShareConfirmation: false, loading: true });
+
+    registerDocument(this.state.document, () => {
+      this.props.enqueueSnackbar('Documento enviado para registro ✔✔', { variant: 'success' });
+      this.props.getTransactions();
+      this.setState({ loading: false });
+    }, err => {
+      this.props.enqueueSnackbar(err && err.error ? err.error : 'Não foi possível registrar este arquivo  😮😮', { variant: 'error' });
+      if (err && err.response.data.transaction) {
+        this.setState({
+          loading: false,
+          openAlertDialog: true,
+          transactionId: err.response.data.transaction.id
+        });
+      }
+    }, () => {
+      this.resetState();
+    });
+  }
 
   resetState = () => {
     this.setState({
@@ -76,6 +108,8 @@ class Upload extends Component {
       document,
       sha256,
       openAlertDialog,
+      openShareConfirmation,
+      openShareDocument,
       transactionId,
       loading,
       registredWithSuccess
@@ -101,22 +135,46 @@ class Upload extends Component {
                 clearDocumentSelected={this.clearDocumentSelected}
               />
             ) : (
-              <WithoutDocument
-                getRootProps={getRootProps}
-                isDragActive={isDragActive}
-                getInputProps={getInputProps}
-              />
-            )
+                <WithoutDocument
+                  getRootProps={getRootProps}
+                  isDragActive={isDragActive}
+                  getInputProps={getInputProps}
+                />
+              )
           )}
         </Dropzone>
-        <AlertDialog
+
+        <ResponsiveDialog
           open={openAlertDialog}
+          handleCloseDialogTitle={() => this.setState({ openAlertDialog: false })}
           handleClose={() => this.setState({ openAlertDialog: false })}
-          dialogTitle="Atenção, documento já registrado!"
+          dialogTitleText="Atenção, documento já registrado!"
           dialogContentText={`Este documento já foi registrado, você pode encontrá-lo pelo ID ${transactionId}`}
-          onAgreeClick={() => this.setState({ openAlertDialog: false })}
-          agreeNameButton="Confirmar"
+          handleDisagree={() => this.setState({ openAlertDialog: false })}
+          handleAgree={() => this.setState({ openAlertDialog: false })}
+          actionButtonAgreeText="Confirmar"
+          actionButtonDisagreeText="Cancelar"
         />
+
+        <ResponsiveDialog
+          open={openShareConfirmation}
+          handleCloseDialogTitle={() => this.setState({ openShareConfirmation: false })}
+          actionButtonAgreeText="Registrar e compartilhar"
+          actionButtonDisagreeText="Registrar, apenas"
+          dialogTitleText="Deseja compartilhar este documento?"
+          dialogContentText="Se você compartilhar este documento, ele será acessível para que seus contatos pareados visualize-os e até mesmo baixe-os para fins de confirmação."
+          handleDisagree={this.registerOnly}
+          handleAgree={() => this.setState({ openShareConfirmation: false, openShareDocument: true })}
+        />
+
+        <ModalShareDocuments
+          open={openShareDocument}
+          handleClose={() => this.setState({ openShareDocument: false })}
+          handleAgree={this.registerAndShare}
+          handleDisagree={() => this.setState({ openShareDocument: false })}
+
+        />
+
       </div>
     );
   }

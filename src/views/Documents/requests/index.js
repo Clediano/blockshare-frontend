@@ -6,10 +6,25 @@ export const registerDocument = (documento, onSuccess, onError, onFinnaly) => {
 
     const formData = new FormData();
     formData.append('file', documento);
-    formData.set('organization', getFromSessionStorage(KEY_STORAGE.ORGANIZATION_ID));
     const config = { headers: { 'Content-Type': 'multipart/form-data' } };
 
     axios.post(`/transaction`, formData, config).then(resp => {
+        onSuccess && onSuccess(resp)
+    }).catch(err => {
+        onError && onError(err)
+    }).finally(() => {
+        onFinnaly && onFinnaly()
+    })
+};
+
+export const registerDocumentAndShare = (documento, emails, onSuccess, onError, onFinnaly) => {
+
+    const formData = new FormData();
+    formData.append('file', documento);
+    formData.set('emails', [...emails]);
+    const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+
+    axios.post(`/transaction/share`, formData, config).then(resp => {
         onSuccess && onSuccess(resp)
     }).catch(err => {
         onError && onError(err)

@@ -136,7 +136,7 @@ class SearchOrganizations extends Component {
           <div className={classes.header}>
             <Tooltip title="Trocar filtro">
               <IconButton aria-label="menu" onClick={this.handleShowSearchFilter}>
-                <Menu onClick={this.handleShowSearchFilter}/>
+                <Menu />
               </IconButton>
             </Tooltip>
             <InputBase
@@ -147,12 +147,12 @@ class SearchOrganizations extends Component {
             />
             <Tooltip title="Pesquisar">
               <IconButton aria-label="search" onClick={this.searchOrganizations}>
-                <Search onClick={this.searchOrganizations}/>
+                <Search />
               </IconButton>
             </Tooltip>
           </div>
 
-          <Divider/>
+          <Divider />
 
           <div className={classes.content}>
             <OrganizationList
@@ -191,8 +191,6 @@ class SearchOrganizations extends Component {
 SearchOrganizations.propTypes = {
   className: PropTypes.string,
   classes: PropTypes.object.isRequired,
-  notifications: PropTypes.array.isRequired,
-  onSelect: PropTypes.func
 };
 
 const SearchOrganizationsWithSnackbars = withSnackbar(SearchOrganizations);

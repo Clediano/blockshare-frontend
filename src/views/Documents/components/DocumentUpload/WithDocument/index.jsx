@@ -6,12 +6,11 @@ import styles from './styles';
 
 import { copyStringToClipboard, formatBytes } from 'common/functions';
 
-import LoadingButton from 'components/LoadingButton';
-
 import imgAudio from './images/audio.svg';
 import imgVideo from './images/video.svg';
 import imgImage from './images/image.svg';
 import imgApplication from './images/application.svg';
+import LoadingButton from 'components/LoadingButton';
 
 class WithDocument extends Component {
 
@@ -21,13 +20,13 @@ class WithDocument extends Component {
     const type = String(document.type);
 
     if (type.includes('audio')) {
-      return <img src={imgAudio} alt="Audio" className={classes.image}/>;
+      return <img src={imgAudio} alt="Audio" className={classes.image} />;
     } else if (type.includes('video')) {
-      return <img src={imgVideo} alt="Video" className={classes.image}/>;
+      return <img src={imgVideo} alt="Video" className={classes.image} />;
     } else if (type.includes('image')) {
-      return <img src={imgImage} alt="File" className={classes.image}/>;
+      return <img src={imgImage} alt="File" className={classes.image} />;
     }
-    return <img src={imgApplication} alt="Application" className={classes.image}/>;
+    return <img src={imgApplication} alt="Application" className={classes.image} />;
   };
 
   loadExtension = () => {
@@ -81,7 +80,7 @@ class WithDocument extends Component {
                 <Grid item>
                   <Tooltip title="Clique para limpar o arquivo">
                     <Button onClick={() => clearDocumentSelected()} aria-label="delete" className={classes.margin}>
-                      ALTERAR
+                      ALTERAR DOCUMENTO
                     </Button>
                   </Tooltip>
                 </Grid>
@@ -98,14 +97,14 @@ class WithDocument extends Component {
                 <Grid item>
                   <Tooltip title="Clique para copiar o SHA256 do arquivo">
                     <Button onClick={() => copyStringToClipboard(sha256)} aria-label="copy" className={classes.margin}>
-                      SHA256
+                      COPIAR HASH DO DOCUMENTO
                     </Button>
                   </Tooltip>
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
-          <Divider className={classes.divider}/>
+          <Divider className={classes.divider} />
           <Grid container direction="row" justify="center" alignItems="center">
             <LoadingButton
               label="Registrar documento"

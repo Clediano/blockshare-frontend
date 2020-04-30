@@ -52,6 +52,7 @@ export default function LoadingButton({ label, loading, success, handleButtonCli
             <div className={classes.wrapper}>
                 <Fab
                     aria-label="save"
+                    disabled={!loading}
                     color={color || "primary"}
                     className={buttonClassname}
                     //onClick={handleButtonClick}

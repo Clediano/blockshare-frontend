@@ -63,7 +63,7 @@ class DocumentsRegistration extends Component {
     this.showLoading();
 
     const { page, rowsPerPage } = this.state;
-    console.log(value)
+
     if (value && value !== '') {
       if (filterSelected) {
         switch (filterSelected.value) {

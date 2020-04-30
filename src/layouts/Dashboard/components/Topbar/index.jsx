@@ -13,9 +13,8 @@ import {
 } from '@material-ui/icons';
 import { NotificationList, SearchOrganizations } from './components';
 import styles from './styles';
-import AlertDialog from 'components/Modal';
-
 import { getNumberOfNotifications } from './requests';
+import ResponsiveDialog from 'components/Dialog';
 
 class Topbar extends Component {
 
@@ -89,7 +88,7 @@ class Topbar extends Component {
               onClick={onToggleSidebar}
               variant="text"
             >
-              {isSidebarOpen ? <CloseIcon/> : <MenuIcon/>}
+              {isSidebarOpen ? <CloseIcon /> : <MenuIcon />}
             </IconButton>
             <Typography
               className={classes.title}
@@ -102,7 +101,7 @@ class Topbar extends Component {
               className={classes.peopleIcon}
               onClick={this.handleShowSearchOrganizations}
             >
-              <PeopleSharp/>
+              <PeopleSharp />
             </IconButton>
 
             <IconButton
@@ -113,7 +112,7 @@ class Topbar extends Component {
                 badgeContent={notificationsCount}
                 color="primary"
               >
-                <NotificationsIcon/>
+                <NotificationsIcon />
               </Badge>
             </IconButton>
 
@@ -121,7 +120,7 @@ class Topbar extends Component {
               className={classes.signOutButton}
               onClick={() => this.setState({ showExitConfirmation: true })}
             >
-              <InputIcon/>
+              <InputIcon />
             </IconButton>
 
           </Toolbar>
@@ -146,18 +145,18 @@ class Topbar extends Component {
           onClose={this.handleCloseSearchOrganizations}
           open={showSearchOrganizations}
         >
-          <SearchOrganizations/>
+          <SearchOrganizations />
         </Popover>
 
-        <AlertDialog
+        <ResponsiveDialog
           open={this.state.showExitConfirmation}
-          handleClose={() => this.setState({ showExitConfirmation: false })}
-          dialogTitle="Confirmação"
-          agreeNameButton="Sim"
-          disagreeNameButton="Não"
+          handleCloseDialogTitle={() => this.setState({ showExitConfirmation: false })}
+          dialogTitleText="Confirmação"
+          actionButtonAgreeText="Sair"
+          actionButtonDisagreeText="Cancelar"
           dialogContentText="Você tem certeza que deseja sair do sistema?"
-          onAgreeClick={this.handleSignOut}
-          onDisagreeClick={() => this.setState({ showExitConfirmation: false })}
+          handleDisagree={() => this.setState({ showExitConfirmation: false })}
+          handleAgree={this.handleSignOut}
         />
       </Fragment>
     );

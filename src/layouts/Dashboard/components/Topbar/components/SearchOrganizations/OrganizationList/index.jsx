@@ -4,23 +4,23 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import {
-	Avatar,
-	CircularProgress,
-	Divider,
-	IconButton,
-	List,
-	ListItem,
-	ListItemAvatar,
-	ListItemText,
-	TablePagination,
-	Tooltip,
-	Typography,
-	withStyles
+  Avatar,
+  CircularProgress,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  TablePagination,
+  Tooltip,
+  Typography,
+  withStyles
 } from '@material-ui/core';
 
 import styles from './styles';
 
-import { Send } from '@material-ui/icons';
+import { Send, Check } from '@material-ui/icons';
 
 class OrganizationList extends Component {
 
@@ -63,20 +63,28 @@ class OrganizationList extends Component {
                       </React.Fragment>
                     }
                   />
-                  <Tooltip title="Enviar convite" aria-label="tooltip">
-                    <IconButton aria-label="arrow">
-                      <Send onClick={() => this.props.sendSolicitation(organization)}/>
-                    </IconButton>
-                  </Tooltip>
+                  {organization.match ? (
+                    <Tooltip title="Convite já foi enviado" aria-label="tooltip">
+                      <IconButton aria-label="arrow">
+                        <Check htmlColor="green" />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                      <Tooltip title="Enviar convite" aria-label="tooltip">
+                        <IconButton aria-label="arrow" onClick={() => this.props.sendSolicitation(organization)}>
+                          <Send color="primary" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                 </ListItem>
-                <Divider variant="inset" component="li"/>
+                <Divider variant="inset" component="li" />
               </React.Fragment>
             );
           }) : (
-            <div className={classes.progressWrapper}>
-              <CircularProgress/>
-            </div>
-          )
+              <div className={classes.progressWrapper}>
+                <CircularProgress />
+              </div>
+            )
           }
           <div className={classes.footer}>
             <TablePagination
@@ -99,7 +107,6 @@ class OrganizationList extends Component {
 OrganizationList.propTypes = {
   className: PropTypes.string,
   classes: PropTypes.object.isRequired,
-  notifications: PropTypes.array.isRequired,
   onSelect: PropTypes.func
 };
 
